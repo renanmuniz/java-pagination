@@ -1,6 +1,5 @@
 package com.pagination.util;
 
-import com.pagination.entity.Registration;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,22 +18,22 @@ public class Pagination {
     private Integer showPerPage;
     private Integer currentPage;
     private Integer totalPages;
+    private Boolean firstPage;
+    private Boolean lastPage;
     private Integer remainingPagesForward;
     private Integer remainingPagesBackward;
+
 
     private List<Object> registers;
 
     public static Pagination createPage(List<Object> results, Integer page, Integer pageSize) {
 
-        if(page==0)
+        if (page == 0)
             page = 1;
-        if(pageSize==0)
+        if (pageSize == 0)
             pageSize = results.size();
 
         Integer totalPages = getTotalPages(pageSize, results.size());
-
-        if(page > totalPages)
-            page = totalPages;
 
         final Pagination pagination = new Pagination();
         pagination.setTotalRegs(results.size());
@@ -43,6 +42,8 @@ public class Pagination {
         pagination.setRemainingPagesForward(totalPages - page);
         pagination.setRemainingPagesBackward(page - 1);
         pagination.setCurrentPage(page);
+        pagination.setFirstPage(pagination.getRemainingPagesBackward());
+        pagination.setLastPage(pagination.getRemainingPagesForward());
 
 
         List<Object> paginatedList = new ArrayList<>();
@@ -63,4 +64,18 @@ public class Pagination {
         return ((totalOfElements - result) / pageSize) + 1;
     }
 
+    public void setRemainingPagesForward(Integer remainingPagesForward) {
+        if (remainingPagesForward >= 0)
+            this.remainingPagesForward = remainingPagesForward;
+        else
+            this.remainingPagesForward = 0;
+    }
+
+    public void setFirstPage(Integer pageBackwards) {
+        this.firstPage = pageBackwards <= 0;
+    }
+
+    public void setLastPage(Integer pageForward) {
+        this.lastPage = pageForward <= 0;
+    }
 }
